@@ -1,0 +1,31 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon Oct  4 20:46:32 2021
+
+@author: ariel
+"""
+import pandas as pd
+import os
+
+directorio = '../Data'
+archivo_veredas = 'arbolado-publico-lineal-2017-2018.csv'
+archivo_parques = 'arbolado-en-espacios-verdes.csv'
+fname_veredas = os.path.join(directorio,archivo_veredas)
+fname_parque = os.path.join(directorio,archivo_parques)
+df_parques = pd.read_csv(fname_parque)
+df_veredas = pd.read_csv(fname_veredas)
+
+cols_sel_1 = ['nombre_cientifico', 'diametro_altura_pecho', 'altura_arbol']
+cols_sel_2 = ['nombre_cie','diametro', 'altura_tot']
+
+df_tipas_vereda = df_veredas[df_veredas['nombre_cientifico'] == 'Tipuana tipu'][cols_sel_1].copy()
+df_tipas_vereda.insert(1,"ambiente","vereda")
+df_tipas_parque = df_parques[df_parques['nombre_cie'] == 'Tipuana Tipu'][cols_sel_2].copy()
+df_tipas_parque.insert(1,"ambiente","parque")
+df_tipas_vereda = df_tipas_vereda.rename(columns={"nombre_cientifico": "Nombre Cientifico", "ambiente": "Ambiente", "diametro_altura_pecho": "Diametro", "altura_arbol": "Altura"})
+df_tipas_parque = df_tipas_parque.rename(columns={"nombre_cie": "Nombre Cientifico", "ambiente": "Ambiente", "diametro": "Diametro", "altura_tot": "Altura"})
+
+df_tipas = pd.concat([df_tipas_vereda, df_tipas_parque])
+df_tipas.boxplot('Diametro',by = 'Ambiente')
+df_tipas.boxplot('Altura',by = 'Ambiente')
